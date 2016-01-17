@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>HTML5 Clock</title>
+
+<style>
+
+canvas {
+
+//width: 500px;
+//height: 500px;
+background-color: #000;
+border-radius: 100%;
+border: 20px;
+background-image:url("http://i65.photobucket.com/albums/h235/Ignwar/Album%20Mountains/KarwendelRangeMittenwaldBavariaGerm.jpg");
+}
+
+body {
+background-color: #000;
+}
+
+</style>
+
+
+
+</head>
+
+<body>
+
+<canvas id="paint" width="600" height="600"></canvas>
+
+
+<img class="img" src="http://i65.photobucket.com/albums/h235/Ignwar/Album%20Mountains/KarwendelRangeMittenwaldBavariaGerm.jpg" width="30" height="30"/>
+
+
+<script>
+
+var canvas = document.getElementById("paint");
+
+var paint = canvas.getContext("2d");
+
+var rad = canvas.height/2;
+
+paint.translate(rad, rad);
+
+rad *= 0.6;
+
+setInterval( makeClock, 1000);
+
+function makeClock(){
+
+paint.beginPath();
+paint.arc(0,0, rad, 0, 2 * Math.PI);
+var grad = paint.createLinearGradient(0,0,0,170);
+grad.addColorStop(0, "black");
+grad.addColorStop(1, "white");
+
+paint.fillStyle = grad;
+paint.fill();
+
+//Make gradient for 3d like effect around clock
+grad = paint.createRadialGradient(0,0,rad * 0.95, 0,0,rad * 1.05);
+grad.addColorStop(0, '#333');
+grad.addColorStop(0.5, 'red');
+grad.addColorStop(1, '#333');
+
+paint.strokeStyle = grad;
+paint.lineWidth = rad * 0.1;
+paint.stroke();
+
+//Make center of clock face
+paint.beginPath();
+paint.arc(0,0, rad * 0.1, 0, 2 * Math.PI);
+paint.fillStyle = '#333';
+paint.fill();
+
+drawNum(paint, rad);
+drawTime(paint, rad);
+
+}
+
+
+function drawNum(ob, radi){
+
+var ang;
+var num;
+
+ob.font = radi * 0.15 + "px arial";
+ob.textBaseline = "middle";
+ob.textAlign = "center";
+		for (num = 1; num < 13; num++) {
+
+		ang = num * Math.PI / 6;
+
+		    ob.rotate(ang);
+			ob.translate(0, -radi*0.85);
+			ob.rotate(-ang);
+			ob.fillText(num.toString(), 0, 0);
+			ob.rotate(ang);
+			ob.translate(0, radi*0.85);
+			ob.rotate(-ang); 
+
+		}
+
+}
+
+function drawTime(ob, radi){
+
+var now = new Date();
+
+var hour = now.getHours();
+var minute = now.getMinutes();
+var second = now.getSeconds();
+
+//hour
+hour %= 12;
+hour = (hour*Math.PI/6) + (minute*Math.PI/(6*60)) +(second*Math.PI/(360*60));
+drawHand(ob, hour, radi *0.5, radi*0.07);
+//minute
+minute=(minute*Math.PI/30)+(second*Math.PI/(30*60));
+drawHand(ob, minute, radi*0.8, radi*0.07);
+
+//second
+second=(second*Math.PI/30);
+drawHand(ob, second, radi*0.9, radi*0.02);
+
+
+}
+
+function drawHand(obb, pos, length, width){
+
+obb.beginPath();
+obb.lineWidth = width;
+obb.lineCap = "round";
+obb.moveTo(0,0);
+obb.rotate(pos);
+obb.lineTo(0, -length);
+obb.stroke();
+obb.rotate(-pos);
+
+}
+
+</script>
+
+</body>
+</html>
